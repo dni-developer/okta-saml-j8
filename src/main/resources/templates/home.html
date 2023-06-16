@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+>
+<head>
+    <title>OKTA SAML</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+
+<h1>Home</h1>
+<p>Registration Id: <span th:text="${registrationId}"></span>.</p>
+<p>Username: <span th:text="${name}"></span></p>
+<h2>Attributes</h2>
+<dl th:each="attribute : ${attributes}">
+    <dt th:text="${attribute.key}"></dt>
+    <dd th:text="${attribute.value}"></dd>
+</dl>
+
+<form th:action="@{/logout}" method="post">
+    <button id="logout" type="submit">Logout</button>
+</form>
+
+</body>
+</html>
