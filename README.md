@@ -1,7 +1,12 @@
 # Read Me
 
+* Java 8
 * Spring Boot
 * Spring Security SAML
-* OKTA
-* Java 8
+  * OKTA
+  * Single Logout
+  * Multiple IdP
+
+
+
 
