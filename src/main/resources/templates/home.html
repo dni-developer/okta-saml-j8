@@ -16,6 +16,8 @@
     <dd th:text="${attribute.value}"></dd>
 </dl>
 
+<p>Custom Field: <span th:text="${customField}"></span></p>
+
 <form th:action="@{/logout}" method="post">
     <button id="logout" type="submit">Logout</button>
 </form>

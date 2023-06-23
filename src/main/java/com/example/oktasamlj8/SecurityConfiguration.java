@@ -5,9 +5,13 @@ import org.opensaml.security.x509.X509Support;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.saml2.core.Saml2X509Credential;
+import org.springframework.security.saml2.provider.service.authentication.OpenSamlAuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
 import org.springframework.security.saml2.provider.service.registration.InMemoryRelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
@@ -30,12 +34,22 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfiguration {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   OpenSamlAuthenticationProvider provider) throws Exception {
         http.authorizeRequests(authorize -> authorize.anyRequest().authenticated());
-        http.saml2Login(withDefaults())
-                .saml2Logout(withDefaults());
+        http.saml2Login(saml2 -> saml2.authenticationManager(new ProviderManager(provider)));
+        http.saml2Logout(withDefaults());
         return http.build();
     }
+
+    @Bean
+    public OpenSamlAuthenticationProvider openSamlAuthenticationProvider(CustomSaml2AuthenticationConverter converter) {
+        OpenSamlAuthenticationProvider provider = new OpenSamlAuthenticationProvider();
+        Converter<OpenSamlAuthenticationProvider.ResponseToken, Saml2Authentication> authenticationConverter = converter.createDefaultResponseAuthenticationConverter();
+        provider.setResponseAuthenticationConverter(authenticationConverter);
+        return provider;
+    }
+
 
     //load key and certificate from keystore
     @Bean
